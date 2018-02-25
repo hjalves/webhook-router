@@ -1,2 +1,5 @@
+build/
+dist/
 venv/
 db.sqlite
+*.egg-info/

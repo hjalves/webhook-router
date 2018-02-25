@@ -50,7 +50,8 @@ def app(config_file):
     application['database'] = database
     application['messages'] = messages
 
-    web.run_app(application)
+    web.run_app(application, host=config['http_host'],
+                port=config['http_port'])
 
 
 def load_config(file):
