@@ -2,10 +2,12 @@ import asyncio
 import argparse
 import logging
 import logging.config
+from asyncio import ensure_future
 from pathlib import Path
 import time
 
 from aiohttp import web
+from aiohttp_remotes import XForwardedRelaxed
 import toml
 
 from webhook_router import views
@@ -43,6 +45,13 @@ def app(config_file):
         logger=logger
     )
 
+    x_forwarded = XForwardedRelaxed()
+    ensure_future(x_forwarded.setup(application))
+
+    application.router.add_get('/c/{channel}', views.get_messages)
+    application.router.add_post('/c/{channel}', views.webhook_receiver)
+    application.router.add_post('/ws/{channel}', views.websocket_handler)
+    
     application.router.add_get('/{channel}', views.get_messages)
     application.router.add_post('/{channel}', views.webhook_receiver)
     application.router.add_get('/{channel}/ws', views.websocket_handler)

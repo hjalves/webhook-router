@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='webhook-router',
-    version='0.1a1',
+    version='0.1a2',
     description='Test project for listening to webhooks and routing to '
                 'websockets.',
     url='https://github.com/hjalves/webhook-router',
@@ -25,6 +25,7 @@ setup(
     install_requires=[
         'aiohttp',
         'aiohttp-cors',
+        'aiohttp-remotes',
         'colorlog',
         'toml',
     ],
