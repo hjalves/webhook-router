@@ -38,7 +38,7 @@ class MessageService:
     async def get_messages(self, channel, limit):
         messages = await self.database.get_messages(channel, limit=limit)
         return [{'id': m['id'],
-                 'time': datetime.datetime.fromtimestamp(m['time']),
+                 'time': datetime.datetime.utcfromtimestamp(m['time']),
                  'channel': m['channel'],
                  'content': json.loads(m['content']),
                  'meta': json.loads(m['meta'])} for m in messages]

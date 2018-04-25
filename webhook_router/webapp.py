@@ -39,7 +39,7 @@ def create_webapp(config, messages_service):
         debug=config['debug_mode'],
         logger=logger
     )
-    x_forwarded = XForwardedRelaxed()
+    x_forwarded = XForwardedRelaxed(num=0)  # num=0 is a hack to get the first
     ensure_future(x_forwarded.setup(webapp))
 
     prefix = config['prefix']
