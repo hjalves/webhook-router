@@ -26,8 +26,8 @@ async def webhook_handler(request):
             return web.Response(status=204)
         return jsonify(result)
     except Exception as e:
-        logger.debug("Error handling request: %s\nHeaders: %s",
-                     e, request.headers)
+        logger.warning("Error handling webhook: %s", format_exception(e))
+        logger.debug("Headers: %s", request.headers)
         raise
 
 async def get_messages(request):
