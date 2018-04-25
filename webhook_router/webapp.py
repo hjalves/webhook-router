@@ -15,20 +15,15 @@ logger = logging.getLogger(__name__)
 
 
 async def webhook_handler(request):
-    try:
-        messages = request.app['messages']
-        channel = request.match_info['channel']
-        content = await http_body(request)
-        meta = {'headers': dict(request.headers),
-                'address': request.remote}
-        result = await messages.handle_message(channel, content, meta)
-        if result is None:
-            return web.Response(status=204)
-        return jsonify(result)
-    except Exception as e:
-        logger.warning("Error handling webhook: %s", format_exception(e))
-        logger.debug("Headers: %s", request.headers)
-        raise
+    messages = request.app['messages']
+    channel = request.match_info['channel']
+    content = await http_body(request)
+    meta = {'headers': dict(request.headers),
+            'address': request.remote}
+    result = await messages.handle_message(channel, content, meta)
+    if result is None:
+        return web.Response(status=204)
+    return jsonify(result)
 
 
 async def get_messages(request):
@@ -98,6 +93,10 @@ async def error_middleware(request, handler):
             return json_error(response.reason, response.status)
         return response
     except web.HTTPException as ex:
+        request.app.logger.warning(
+            "HTTP error (%s) while handling request %s %s: %s",
+            ex.status, request.method, request.rel_url, format_exception(ex))
+        request.app.logger.debug("Request headers: %s", request.headers)
         if ex.status >= 400:
             return json_error(ex.reason, ex.status)
         raise
@@ -107,4 +106,5 @@ async def error_middleware(request, handler):
         request.app.logger.exception(
             "Exception while handling request %s %s:", request.method,
             request.rel_url)
+        request.app.logger.debug("Request headers: %s", request.headers)
         return json_error(format_exception(e), 500)
