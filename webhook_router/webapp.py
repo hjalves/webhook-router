@@ -15,16 +15,20 @@ logger = logging.getLogger(__name__)
 
 
 async def webhook_handler(request):
-    messages = request.app['messages']
-    channel = request.match_info['channel']
-    content = await jsonbody(request)
-    meta = {'headers': dict(request.headers),
-            'address': request.remote}
-    result = await messages.handle_message(channel, content, meta)
-    if result is None:
-        return web.Response(status=204)
-    return jsonify(result)
-
+    try:
+        messages = request.app['messages']
+        channel = request.match_info['channel']
+        content = await jsonbody(request)
+        meta = {'headers': dict(request.headers),
+                'address': request.remote}
+        result = await messages.handle_message(channel, content, meta)
+        if result is None:
+            return web.Response(status=204)
+        return jsonify(result)
+    except Exception as e:
+        logger.debug("Error handling request: %s\nHeaders: %s",
+                     e, request.headers)
+        raise
 
 async def get_messages(request):
     channel = request.match_info['channel']
