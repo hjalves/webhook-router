@@ -64,6 +64,7 @@ async def start_webapp(webapp, config):
         unix_site = web.UnixSite(runner, unix_socket)
         logger.info("Will start unix on: %s", unix_site.name)
         await unix_site.start()
+        unix_socket.chmod(0o777)
     return runner
 
 
