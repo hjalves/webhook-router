@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import sys
 import webhook_router.app
-webhook_router.app.main()
+
+sys.exit(webhook_router.app.main())

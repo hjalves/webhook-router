@@ -1,6 +1,5 @@
 import datetime
 import json
-from json import JSONDecodeError
 from traceback import format_exception_only
 
 from aiohttp import web

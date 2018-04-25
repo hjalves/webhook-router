@@ -1,8 +1,14 @@
 # Config file for webhook-router
 
-http_host = "0.0.0.0"
-http_port = 8000
+[web]
 debug_mode = true
+unix_socket = "webhooks.http.socket"
+http_port = "9010"
+prefix = "/webhooks"
+
+[wamp]
+router = "ws://localhost:8080/ws"
+realm = "latitude"
 
 
 # Logging configuration
@@ -34,6 +40,9 @@ class = "logging.StreamHandler"
 formatter = "simple"
 level = "DEBUG"
 stream = "ext://sys.stdout"
+
+[logging.loggers.autobahn]
+level = "DEBUG"
 
 [logging.loggers.asyncio]
 level = "DEBUG"

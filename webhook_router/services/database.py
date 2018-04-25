@@ -72,6 +72,11 @@ class DatabaseWorker(Thread):
                      "content TEXT NOT NULL, "
                      "meta TEXT NOT NULL)")
 
+        conn.execute("CREATE TABLE IF NOT EXISTS Channels("
+                     "id INTEGER PRIMARY KEY, "
+                     "channel TEXT NOT NULL UNIQUE, "
+                     "handler TEXT)")
+
     @queued_call
     def insert_message(self, timestamp, channel, content, meta):
         conn = self.connection
@@ -90,4 +95,12 @@ class DatabaseWorker(Thread):
                "ORDER BY id DESC "
                "LIMIT :limit")
         cur = conn.execute(sql, {'channel': channel, 'limit': limit})
+        return cur.fetchall()
+
+    @queued_call
+    def get_channels(self):
+        conn = self.connection
+        sql = ("SELECT id, channel, handler "
+               "FROM Channels")
+        cur = conn.execute(sql)
         return cur.fetchall()

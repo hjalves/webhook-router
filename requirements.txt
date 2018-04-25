@@ -1,5 +1,6 @@
 aiohttp
 aiohttp-cors
 aiohttp-remotes
+autobahn
 colorlog
 toml
