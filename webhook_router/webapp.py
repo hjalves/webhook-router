@@ -8,7 +8,7 @@ from pathlib import Path
 from aiohttp import web
 from aiohttp_remotes import XForwardedRelaxed
 
-from webhook_router.utils import jsonify, jsonbody, json_error, \
+from webhook_router.utils import jsonify, http_body, json_error, \
     format_exception
 
 logger = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ async def webhook_handler(request):
     try:
         messages = request.app['messages']
         channel = request.match_info['channel']
-        content = await jsonbody(request)
+        content = await http_body(request)
         meta = {'headers': dict(request.headers),
                 'address': request.remote}
         result = await messages.handle_message(channel, content, meta)
@@ -29,6 +29,7 @@ async def webhook_handler(request):
         logger.warning("Error handling webhook: %s", format_exception(e))
         logger.debug("Headers: %s", request.headers)
         raise
+
 
 async def get_messages(request):
     channel = request.match_info['channel']

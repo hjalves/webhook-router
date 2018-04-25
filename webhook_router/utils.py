@@ -4,18 +4,26 @@ from traceback import format_exception_only
 
 from aiohttp import web
 
+JSON_TYPE = 'application/json'
+FORM_TYPE = 'application/x-www-form-urlencoded'
+
 
 def format_exception(ex):
     return format_exception_only(ex.__class__, ex)[-1].strip()
 
 
-async def jsonbody(request):
-    if not request.content_type == 'application/json':
-        raise web.HTTPBadRequest(reason='Only JSON is supported')
-    try:
-        return await request.json()
-    except ValueError as e:
-        raise web.HTTPBadRequest(reason=format_exception(e))
+async def http_body(request):
+    if request.content_type in (JSON_TYPE, FORM_TYPE):
+        try:
+            if request.content_type == JSON_TYPE:
+                return await request.json()
+            else:
+                return dict(await request.post())
+        except Exception as e:
+            raise web.HTTPBadRequest(reason=format_exception(e))
+    else:
+        raise web.HTTPBadRequest(
+            reason=f"Content-Type must be '{JSON_TYPE}' or '{FORM_TYPE}'")
 
 
 def json_dumps(obj):
